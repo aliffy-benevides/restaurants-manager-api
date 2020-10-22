@@ -1,8 +1,8 @@
-import Database from "./Database";
+import Database from "../database/Database";
 import RestaurantRepository from "./RestaurantRepository";
-import { FullRestaurantEntity, RestaurantEntity } from "../Entities/Restaurants";
+import { FullRestaurantEntity, RestaurantEntity } from "../../Entities/Restaurants";
 
-import RepositoryException from './RepositoryException';
+import RepositoryException from '../RepositoryException';
 
 const db = new Database();
 const repository = new RestaurantRepository();
@@ -45,8 +45,8 @@ describe('RestaurantRepository', () => {
 
     if (returnWithIds) {
       const restaurants = await repository.List();
-      const restaurant1Id = restaurants.find(r => r.name === restaurant1.name).id;
-      const restaurant2Id = restaurants.find(r => r.name === restaurant2.name).id;
+      const restaurant1Id = restaurants.find(r => r.name === restaurant1.name)?.id;
+      const restaurant2Id = restaurants.find(r => r.name === restaurant2.name)?.id;
       restaurant1 = { ...restaurant1, id: restaurant1Id };
       restaurant2 = { ...restaurant2, id: restaurant2Id };
     }
@@ -56,7 +56,7 @@ describe('RestaurantRepository', () => {
 
   async function getFullRestaurants(): Promise<FullRestaurantEntity[]> {
     const restaurants = await repository.List();
-    return await Promise.all(restaurants.map(r => repository.Show(r.id)));
+    return await Promise.all(restaurants.map(r => repository.Show(r.id as number)));
   }
 
   function convertFullRestaurantToRestaurant(restaurant: FullRestaurantEntity): RestaurantEntity {

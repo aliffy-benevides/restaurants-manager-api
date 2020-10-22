@@ -1,4 +1,4 @@
-import { FullProductEntity } from "../Entities/Products";
+import { FullProductEntity } from "../../Entities/Products";
 import IProductRepository from "./IProductRepository";
 
 export default class ProductRepository implements IProductRepository {

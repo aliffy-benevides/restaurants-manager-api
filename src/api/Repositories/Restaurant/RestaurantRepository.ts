@@ -1,4 +1,4 @@
-import { RestaurantEntity, FullRestaurantEntity } from '../Entities/Restaurants';
+import { RestaurantEntity, FullRestaurantEntity } from '../../Entities/Restaurants';
 import IRestaurantRepository from './IRestaurantRepository';
 
 export default class RestaurantRepository implements IRestaurantRepository {

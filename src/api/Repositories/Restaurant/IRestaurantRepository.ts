@@ -1,4 +1,4 @@
-import { FullRestaurantEntity, RestaurantEntity } from "../Entities/Restaurants";
+import { FullRestaurantEntity, RestaurantEntity } from "../../Entities/Restaurants";
 
 export default interface IRestaurantRepository {
   List(): Promise<RestaurantEntity[]>;

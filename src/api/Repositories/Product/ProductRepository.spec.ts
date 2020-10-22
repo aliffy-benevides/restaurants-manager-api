@@ -1,8 +1,8 @@
-import Database from "./Database";
+import Database from "../database/Database";
 import ProductRepository from './ProductRepository';
-import { FullProductEntity } from "../Entities/Products";
+import { FullProductEntity } from "../../Entities/Products";
 
-import RepositoryException from './RepositoryException';
+import RepositoryException from '../RepositoryException';
 
 const db = new Database();
 const repository = new ProductRepository();
@@ -52,8 +52,8 @@ describe('ProductRepository', () => {
 
     if (returnWithIds) {
       const products = await repository.List(restaurantId);
-      const product1Id = products.find(r => r.name === product1.name).id;
-      const product2Id = products.find(r => r.name === product2.name).id;
+      const product1Id = products.find(r => r.name === product1.name)?.id;
+      const product2Id = products.find(r => r.name === product2.name)?.id;
       product1 = { ...product1, id: product1Id };
       product2 = { ...product2, id: product2Id };
     }

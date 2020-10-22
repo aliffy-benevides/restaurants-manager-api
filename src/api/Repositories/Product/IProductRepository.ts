@@ -1,4 +1,4 @@
-import { FullProductEntity } from "../Entities/Products";
+import { FullProductEntity } from "../../Entities/Products";
 
 export default interface IProductRepository {
   List(restaurant_id: number): Promise<FullProductEntity[]>;
