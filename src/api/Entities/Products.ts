@@ -22,7 +22,7 @@ export interface PromotionDayEntity {
   end: string;
 }
 
-interface FullPromotionEntity extends PromotionEntity {
+export interface FullPromotionEntity extends PromotionEntity {
   hours: PromotionDayEntity[];
 }
 

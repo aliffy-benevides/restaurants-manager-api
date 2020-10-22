@@ -4,8 +4,11 @@ import { FullProductEntity } from "../../Entities/Products";
 
 import RepositoryException from '../RepositoryException';
 
+// Must set TEST_NAME before instantiate Database, because Database uses this variable;
+process.env.TEST_NAME = 'ProductRepositoryTest';
+
 const db = new Database();
-const repository = new ProductRepository();
+const repository = new ProductRepository(db);
 
 describe('ProductRepository', () => {
   beforeAll(() => {
@@ -61,6 +64,20 @@ describe('ProductRepository', () => {
     return { product1, product2 };
   }
 
+  function expectedProduct(product: FullProductEntity) {
+    return expect.objectContaining({
+      ...product,
+      promotions: expect.arrayContaining(
+        product.promotions.map(promotion => expect.objectContaining({
+          ...promotion,
+          hours: expect.arrayContaining(
+            promotion.hours.map(hour => expect.objectContaining(hour))
+          )
+        }))
+      )
+    })
+  }
+
   describe('When create product', () => {
     test('Should create the product', async () => {
       const initialProducts = await repository.List(restaurantId);
@@ -71,7 +88,9 @@ describe('ProductRepository', () => {
       expect(actualProducts.length).toBe(1);
       expect(actualProducts[0]).toMatchObject(generateValidProduct());
       expect(actualProducts[0].id).toBeTruthy();
-      expect(actualProducts[0].promotions[0].id).toBeTruthy();
+      for (const promotion of actualProducts[0].promotions) {
+        expect(promotion.id).toBeTruthy();
+      }
     })
   })
 
@@ -79,15 +98,21 @@ describe('ProductRepository', () => {
     describe('and it is a found product', () => {
       test('Should update only the product', async () => {
         const { product1, product2 } = await initRepositoryWithProducts();
-        const updatedProduct: FullProductEntity = { ...product1, photo_url: 'Updated photo url' };
+        const updatedProduct: FullProductEntity = { ...product1, photo_url: 'Updated photo url',
+          promotions: [{
+            ...product1.promotions[0],
+            description: 'Promoção de domingo',
+            hours: [{ day: 0, start: '12:00', end: '17:00' }]
+          }]
+        };
 
         await repository.Update(updatedProduct);
         const actualRestaurants = await repository.List(restaurantId);
 
         expect(actualRestaurants.length).toBe(2);
         expect(actualRestaurants).toEqual(expect.arrayContaining([
-          updatedProduct,
-          product2
+          expectedProduct(updatedProduct),
+          expectedProduct(product2)
         ]))
       })
     })
@@ -114,12 +139,10 @@ describe('ProductRepository', () => {
       expect(Array.isArray(initialList)).toBe(true);
       expect(Array.isArray(actualList)).toBe(true);
       expect(initialList.length).toBe(0);
+      expect(actualList.length).toBe(2);
       expect(actualList).toEqual(expect.arrayContaining([
-        product1,
-        product2
-      ]))
-      expect(actualList).toEqual(expect.not.arrayContaining([
-        productNotListed
+        expectedProduct(product1),
+        expectedProduct(product2)
       ]))
     })
   })
@@ -127,18 +150,17 @@ describe('ProductRepository', () => {
   describe('When delete product', () => {
     describe('and it is a found product', () => {
       test('Should the product have not been in repository anymore', async () => {
-        const { product1 } = await initRepositoryWithProducts(true);
+        const { product1, product2 } = await initRepositoryWithProducts(true);
 
         await repository.Delete(product1.id as number);
         const products = await repository.List(restaurantId);
 
-        expect(products).toEqual(
-          expect.not.arrayContaining([product1])
-        );
+        expect(products.filter(p => p.id === product1.id).length).toBe(0);
+        expect(products.filter(p => p.id === product2.id).length).toBe(1);
       })
     })
 
-    describe('and it is a not found restaurant', () => {
+    describe('and it is a not found product', () => {
       test('Should throws a not found exception', async () => {
         expect(repository.Delete(1))
           .rejects

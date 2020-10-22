@@ -4,8 +4,11 @@ import { FullRestaurantEntity, RestaurantEntity } from "../../Entities/Restauran
 
 import RepositoryException from '../RepositoryException';
 
+// Must set TEST_NAME before instantiate Database, because Database uses this variable;
+process.env.TEST_NAME = 'RestaurantRepositoryTest';
+
 const db = new Database();
-const repository = new RestaurantRepository();
+const repository = new RestaurantRepository(db);
 
 describe('RestaurantRepository', () => {
   beforeAll(() => {
@@ -61,7 +64,6 @@ describe('RestaurantRepository', () => {
 
   function convertFullRestaurantToRestaurant(restaurant: FullRestaurantEntity): RestaurantEntity {
     return {
-      id: restaurant.id,
       photo_url: restaurant.photo_url,
       name: restaurant.name,
       address: restaurant.address
@@ -85,16 +87,21 @@ describe('RestaurantRepository', () => {
     describe('and it is a found restaurant', () => {
       test('Should update only the restaurant', async () => {
         const { restaurant1, restaurant2 } = await initRepositoryWithRestaurants();
-        const updatedRestaurant: FullRestaurantEntity = { ...restaurant1, photo_url: 'Updated photo url' };
+        const updatedRestaurant: FullRestaurantEntity = { ...restaurant1, photo_url: 'Updated photo url', hours: [
+          { day: 0, start: '12:00', end: '17:00' }
+        ] };
 
         await repository.Update(updatedRestaurant);
         const actualRestaurants = await getFullRestaurants();
 
+        const expectedList = [updatedRestaurant, restaurant2].map(r => expect.objectContaining({
+          ...r,
+          hours: expect.arrayContaining(r.hours.map(h => (
+            expect.objectContaining(h)
+          )))
+        }))
         expect(actualRestaurants.length).toBe(2);
-        expect(actualRestaurants).toEqual(expect.arrayContaining([
-          updatedRestaurant,
-          restaurant2
-        ]))
+        expect(actualRestaurants).toEqual(expect.arrayContaining(expectedList));
       })
     })
 
@@ -119,8 +126,8 @@ describe('RestaurantRepository', () => {
       expect(Array.isArray(actualList)).toBe(true);
       expect(initialList.length).toBe(0);
       expect(actualList).toEqual(expect.arrayContaining([
-        convertFullRestaurantToRestaurant(restaurant1),
-        convertFullRestaurantToRestaurant(restaurant2)
+        expect.objectContaining(convertFullRestaurantToRestaurant(restaurant1)),
+        expect.objectContaining(convertFullRestaurantToRestaurant(restaurant2))
       ]))
     })
   })
@@ -148,14 +155,13 @@ describe('RestaurantRepository', () => {
   describe('When delete restaurant', () => {
     describe('and it is a found restaurant', () => {
       test('Should the restaurant have not been in repository anymore', async () => {
-        const { restaurant1 } = await initRepositoryWithRestaurants(true);
+        const { restaurant1, restaurant2 } = await initRepositoryWithRestaurants(true);
 
         await repository.Delete(restaurant1.id as number);
         const restaurants = await getFullRestaurants();
 
-        expect(restaurants).toEqual(
-          expect.not.arrayContaining([restaurant1])
-        );
+        expect(restaurants.filter(r => r.id === restaurant1.id).length).toBe(0);
+        expect(restaurants.filter(r => r.id === restaurant2.id).length).toBe(1);
       })
     })
 
