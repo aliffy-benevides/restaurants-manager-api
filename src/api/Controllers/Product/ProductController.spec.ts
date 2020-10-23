@@ -27,6 +27,12 @@ describe('ProductController', () => {
       promotions: []
     } as any
   }
+  function generateValidProductWithRestaurantId(): FullProductEntity {
+    return {
+      ...generateValidProduct(),
+      restaurant_id: restaurantId
+    }
+  }
   function generateValidProductWithIds(): FullProductEntity {
     return {
       ...generateValidProduct(),
@@ -63,7 +69,7 @@ describe('ProductController', () => {
           .post(url)
           .send(generateValidProduct())
 
-        expect(mockRepository.Create).toHaveBeenCalledWith(generateValidProduct());
+        expect(mockRepository.Create).toHaveBeenCalledWith(generateValidProductWithRestaurantId());
         expect(res.status).toBe(201);
       })
     })
@@ -74,7 +80,7 @@ describe('ProductController', () => {
           .post(url)
           .send(generateValidProductWithInvalidAttrs())
 
-        expect(mockRepository.Create).toHaveBeenCalledWith(generateValidProduct());
+        expect(mockRepository.Create).toHaveBeenCalledWith(generateValidProductWithRestaurantId());
         expect(res.status).toBe(201);
       })
     })
@@ -239,7 +245,7 @@ describe('ProductController', () => {
 
     describe('When repository throws an unexpected error', () => {
       test('Should return status 500 and error\'s message', async () => {
-        await testWhenRepoThrowsError(app, validUrl, 'get', mockRepository.List, 'Unexpected error on list restaurants');
+        await testWhenRepoThrowsError(app, validUrl, 'get', mockRepository.List, 'Unexpected error on list products');
       })
     })
   })

@@ -26,8 +26,8 @@ describe('RestaurantController', () => {
       address: 'Fake address',
       name: 'Restaurant name',
       hours: [
-        { day: 1, start: '07:45', end: '17:00', restaurant_id: restaurantId },
-        { day: 2, start: '07:45', end: '17:00', restaurant_id: restaurantId }
+        { day: 1, start: '07:45', end: '17:00' },
+        { day: 2, start: '07:45', end: '17:00' }
       ]
     }
   }
