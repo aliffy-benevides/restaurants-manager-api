@@ -15,7 +15,7 @@ export function initializeServerWithController(controller: IController) {
 
   app.use(controller.Path, controller.Router);
 
-  app.use('/', ErrorHandler);
+  app.use(ErrorHandler);
 
   return app;
 }
