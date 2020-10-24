@@ -1,7 +1,6 @@
 import jestExpress from 'jest-express';
 import { mock, MockProxy } from 'jest-mock-extended';
 import express from 'express';
-import cors from 'cors';
 
 import Api from './Api';
 import ProductController from './Controllers/Product/ProductController';
@@ -12,8 +11,9 @@ jest.mock('express', () => {
   return jestExpress;
 })
 
-describe('ApiTest', () => {
+describe('ApiTests', () => {
   let api: Api;
+  const port = 3000;
 
   let restaurantController: MockProxy<RestaurantController>;
   let productController: MockProxy<ProductController>;
@@ -21,24 +21,33 @@ describe('ApiTest', () => {
   beforeEach(() => {
     restaurantController = mock<RestaurantController>();
     productController = mock<ProductController>();
-    
+
     api = new Api([
       restaurantController,
       productController
-    ]);
+    ], port);
   })
 
-  test('Should apply middlewares', () => {
-    expect(api.app.use).toHaveBeenCalledWith(cors());
-    expect(api.app.use).toHaveBeenCalledWith(express.json());
+  describe('When instantiated', () => {
+    test('Should apply middlewares', () => {
+      expect(api.app.use).toHaveBeenCalledWith(express.json());
+    })
+
+    test('Should apply controllers', () => {
+      expect(api.app.use).toHaveBeenCalledWith(productController.Path, productController.Router);
+      expect(api.app.use).toHaveBeenCalledWith(restaurantController.Path, restaurantController.Router);
+    })
+
+    test('Should apply error handler', () => {
+      expect(api.app.use).toHaveBeenCalledWith(ErrorHandler);
+    })
   })
 
-  test('Should apply controllers', () => {
-    expect(api.app.use).toHaveBeenCalledWith(productController.Path, productController.Router);
-    expect(api.app.use).toHaveBeenCalledWith(restaurantController.Path, restaurantController.Router);
-  })
+  describe('When run Listen method', () => {
+    test('Should run api on specified port', () => {
+      api.Listen();
 
-  test('Should apply error handler', () => {
-    expect(api.app.use).toHaveBeenCalledWith(ErrorHandler);
+      expect(api.app.listen).toHaveBeenCalledWith(port, expect.any(Function));
+    })
   })
 })
