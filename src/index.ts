@@ -16,7 +16,9 @@ const db = new Database();
 const restaurantRepository = new RestaurantRepository(db);
 const productRepository = new ProductRepository(db);
 
-db.Setup();
+if (process.env.NODE_ENV === 'development') {
+  db.Setup();
+}
 
 // Instantiate Controllers
 const restaurantController = new RestaurantController(restaurantRepository, productRepository);

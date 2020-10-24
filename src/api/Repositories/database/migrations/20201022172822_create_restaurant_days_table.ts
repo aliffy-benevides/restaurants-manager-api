@@ -7,10 +7,10 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id').primary();
 
     table.integer('day').notNullable().comment('Work day - 0 ~ 6 (Sunday to Saturday)');
-    table.string('start', 5).notNullable().comment('Start time, follow the format \'HH:mm\'');
-    table.string('end', 5).notNullable().comment('End time, follow the format \'HH:mm\'');
+    table.string('start', 5).notNullable().comment('Start time, follow the format (HH:mm)');
+    table.string('end', 5).notNullable().comment('End time, follow the format (HH:mm)');
 
-    table.integer('restaurant_id').notNullable()
+    table.integer('restaurant_id').notNullable().unsigned()
       .references('id')
       .inTable('restaurants')
       .onDelete('CASCADE')

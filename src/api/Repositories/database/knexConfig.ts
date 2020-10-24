@@ -1,5 +1,12 @@
 import path from 'path';
 
+const {
+  RESTAURANT_MANAGER_DB_HOST,
+  RESTAURANT_MANAGER_DB_USER,
+  RESTAURANT_MANAGER_DB_PASSWORD,
+  RESTAURANT_MANAGER_DB_DATABASE,
+} = process.env
+
 interface KnexConfig {
   [key: string]: object
 }
@@ -29,12 +36,12 @@ const knexConfig: KnexConfig = {
   },
   production: {
     ...defaultConfigs,
-    client: 'mysql',
+    client: 'mysql2',
     connection: {
-      host: '127.0.0.1',
-      user: 'your_database_user',
-      password: 'your_database_password',
-      database: 'myapp_test'
+      host: RESTAURANT_MANAGER_DB_HOST,
+      user: RESTAURANT_MANAGER_DB_USER,
+      password: RESTAURANT_MANAGER_DB_PASSWORD,
+      database: RESTAURANT_MANAGER_DB_DATABASE
     }
   }
 };

@@ -3,3 +3,6 @@
 
 # Test or development database files
 **/*.sqlite
+
+# Build files
+/dist

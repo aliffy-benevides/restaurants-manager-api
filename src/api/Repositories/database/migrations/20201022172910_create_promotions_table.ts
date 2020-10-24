@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('description').notNullable();
     table.decimal('price').notNullable();
 
-    table.integer('product_id').notNullable()
+    table.integer('product_id').notNullable().unsigned()
       .references('id')
       .inTable('products')
       .onDelete('CASCADE')

@@ -15,14 +15,56 @@ RESTful API that can manage restaurants and menu products.
 ## Architecture
 This system was designed based on the layered architecture and has the following structure:
 * Entity
-  ![Entities Image](./media/entities.png)
+  - ![Entities Image](./media/entities.png)
 * Repository
-  ![Repositories Image](./media/repositories.png)
+  - ![Repositories Image](./media/repositories.png)
 * Controller
-  ![Controllers Image](./media/controllers.png)
+  - ![Controllers Image](./media/controllers.png)
 
 ## How to setup and run
-  
+- Clone project and setup:
+  1. On the terminal, go to the folder you want to download the project
+    ```shell
+    cd {{ project_folder }}
+    ```
+  2. Clone the project:
+    ```shell
+    git clone https://github.com/aliffy-benevides/restaurants-manager-api.git
+    ```
+  3. Enter on project's folder:
+    ```shell
+    cd restaurants-manager-api\
+    ```
+  4. Install dependencies:
+    ```shell
+    npm i
+    ```
+
+- Run tests:
+  ```shell
+  npm test
+  ```
+
+- Run project in development mode:
+  ```shell
+  npm start
+  ```
+
+- Run project in production mode:
+  1. Set the following environment variables in your operational system:
+      - RESTAURANT_MANAGER_DB_HOST=127.0.0.1
+      - RESTAURANT_MANAGER_DB_USER=your_database_user
+      - RESTAURANT_MANAGER_DB_PASSWORD=your_database_password
+      - RESTAURANT_MANAGER_DB_DATABASE=myapp_test
+  2. Initialize production database
+    ```shell
+    npm run knex:migrate:prod
+    ```
+  3. Start production server, this script also create the production files on folder 'dist'
+    ```shell
+    npm run start:prod
+    ```
+
 
 ## How to use
 The following endpoints are available to use the API.
