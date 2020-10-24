@@ -16,3 +16,14 @@ export function ParseId(paramId: string, errorMessage: string): number {
 
   return id;
 }
+
+export function VerifyHour(hourStr: string) {
+  if (!/\d\d:\d\d/.test(hourStr))
+    throw `Invalid hour (${hourStr}), must be in format HH:mm`;
+    
+  const [hour, minute] = hourStr.split(':').map(Number);
+  if (hour < 0 || hour > 23)
+    throw `Invalid hour (${hourStr})`;
+  if (minute !== 0 && minute !== 15 && minute !== 30 && minute !== 45)
+    throw `Invalid minute (${hourStr}), must be multiple of 15`;
+}

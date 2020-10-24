@@ -6,7 +6,7 @@ import IProductRepository from "../../Repositories/Product/IProductRepository";
 import { FullRestaurantEntity, RestaurantDayEntity } from "../../Entities/Restaurants";
 import ControllerException from "../ControllerException";
 
-import { ParseError, ParseId } from "../utils";
+import { ParseError, ParseId, VerifyHour } from "../utils";
 
 interface Params {
   id: string;
@@ -37,11 +37,13 @@ export default class RestaurantController implements IController {
     if (day === undefined || day === null)
       throw 'Day is required';
 
-    if (!start || start.length !== 5)
-      throw `Start time '${start}' is invalid, must be in format HH:mm`;
-
-    if (!end || end.length !== 5)
-      throw `End time '${end}' is invalid, must be in format HH:mm`;
+    if (!start)
+      throw `Start time '${start}' is required`;
+    VerifyHour(start);
+    
+    if (!end)
+      throw `End time '${end}' is required`;
+    VerifyHour(end);
 
     return hour;
   }

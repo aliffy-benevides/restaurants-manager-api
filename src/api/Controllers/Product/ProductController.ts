@@ -4,7 +4,7 @@ import IController from "../IController";
 import IProductRepository from "../../Repositories/Product/IProductRepository";
 import { FullProductEntity, FullPromotionEntity, PromotionDayEntity } from "../../Entities/Products";
 import ControllerException from "../ControllerException";
-import { ParseError, ParseId } from "../utils";
+import { ParseError, ParseId, VerifyHour } from "../utils";
 
 interface ParamsRestaurantId {
   restaurantId: string;
@@ -41,11 +41,13 @@ export default class ProductController implements IController {
     if (day === undefined || day === null)
       throw 'Day is required';
 
-    if (!start || start.length !== 5)
-      throw `Start time '${start}' is invalid, must be in format HH:mm`;
-
-    if (!end || end.length !== 5)
-      throw `End time '${end}' is invalid, must be in format HH:mm`;
+    if (!start)
+      throw `Start time '${start}' is required`;
+    VerifyHour(start);
+    
+    if (!end)
+      throw `End time '${end}' is required`;
+    VerifyHour(end);
 
     return hour;
   }
