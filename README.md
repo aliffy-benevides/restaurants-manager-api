@@ -1,5 +1,5 @@
 # Restaurant Manager API
-RESTful API that can manage restaurants and menu products.
+RESTful API that can manage restaurants and menu products, developed in NodeJS with Typescript, integrated with a MySQL database.
 
 ## Features
 * List restaurants
@@ -20,6 +20,10 @@ This system was designed based on the layered architecture and has the following
   - ![Repositories Image](./media/repositories.png)
 * Controller
   - ![Controllers Image](./media/controllers.png)
+
+## System requirements
+  - Have the Node installed.
+  - Access to a MySQL database.
 
 ## How to setup and run
 - Clone project and setup:
@@ -197,3 +201,9 @@ The following endpoints are available to use the API.
       curl --request DELETE \
         --url {{ baseUrl }}/restaurants/:restaurantId/products/:id
       ```
+
+## Challenges and problems
+  - **Photo upload**
+    The application are just able to store the link of a photo already hosted. To improve it, can be added endpoints for photo uploading.
+  - **Integration of knex with webpack**
+    There is some problems to integrate the query builder knex and the module bundler webpack, including the problems to run migrations after build project. To solve that, it is necessary run the production database setup with development files, and also it is necessary to store the database credentials in the system environment variables.
